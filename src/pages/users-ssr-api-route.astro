@@ -1,10 +1,10 @@
 ---
 
 // Fetch data from an internal API route in an Astro SSR page (The request flow has a new step, creating a cleaner architecture):
-// - Browser --> your-site.com/users-ssr-api-route A user requests the page.
-// - Astro Server --> your-site.com/api/users. Your users-ssr-api-route.astro page's script runs on the server and makes a fetch request to its own API route.
-// - API Route --> jsonplaceholder.typicode.com. Your /api/users route runs, fetches the data from the external source, and sends it back as a JSON response.
-// - Page Renders HTML The users-ssr-api-route.astro page receives the JSON, finishes rendering the full HTML for the list, and sends the final page to the browser.
+// 1. Browser --> your-site.com/users-ssr-api-route A user requests the page.
+// 2. Astro Server --> your-site.com/api/users. Your users-ssr-api-route.astro page's script runs on the server and makes a fetch request to its own API route.
+// 3. API Route --> jsonplaceholder.typicode.com. Your /api/users route runs, fetches the data from the external source, and sends it back as a JSON response.
+// 4. Page Renders HTML The users-ssr-api-route.astro page receives the JSON, finishes rendering the full HTML for the list, and sends the final page to the browser.
 
 import MainLayout from '../layouts/MainLayout.astro';
 import UserInfo from '../components/UserInfo.tsx';

@@ -14,6 +14,7 @@ import preact from '@astrojs/preact';
 
 export default defineConfig({
   output: 'server', // enables SSR
+  // output: 'static', // default is static site generation (SSG)
   adapter: node({
     mode: 'standalone'
   }),
