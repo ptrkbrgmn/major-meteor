@@ -3,12 +3,13 @@
 
 ## Project Overview
 
-This repo extends the minimal Astro starter to demonstrate three server rendering patterns plus an interactive island using Preact:
+This repo extends the minimal Astro starter to demonstrate multiple delivery patterns plus selective hydration with a Preact island:
 
-1. Plain SSR page (`users-ssr.astro`): Fetches external user data directly during the server render.
-2. SSR via internal API route (`users-ssr-api-route.astro` + `pages/api/users.ts`): Separates data access (API route) from presentation (page), enabling reuse and abstraction of external API details.
-3. Deferred streaming (`users-defer.astro` + `DeferredUser.astro`): Uses `server:defer` to stream a placeholder immediately, then swaps in the full user list once rendered on the server, illustrating progressive rendering.
-4. Preact client island (`LikeButtonIsland.astro` + `LikeButton.tsx`): Hydrates only the like button for interactivity while the rest of the page remains static HTML.
+1. Plain SSR (`users-ssr.astro`): Fetches external user data directly during the server render.
+2. SSR + internal API (`users-ssr-api-route.astro` + `pages/api/users.ts`): Separates data access from presentation, enabling reuse and abstraction of external API details.
+3. Streaming defer (`users-defer.astro` + `DeferredUser.astro`): Uses `server:defer` to stream a placeholder immediately, then swaps in the full user list once rendered server-side (progressive rendering).
+4. Static Generation + API logic (`users-ssg-api-route.astro`): Calls the API route logic at build time so the generated HTML ships with complete data.
+5. Islands interactivity (`LikeButtonIsland.astro` + `LikeButton.tsx`): Hydrates only the like button, keeping the rest of the markup as lightweight static HTML.
 
 Core technologies & configuration:
 * Astro with Node adapter (`astro.config.mjs`) configured for full SSR (`output: 'server'`).
@@ -18,7 +19,7 @@ Core technologies & configuration:
 
 Navigation links in `MainLayout.astro` make it easy to compare the three data loading strategies side by side. Each list item also embeds the interactive like button island to highlight selective hydration.
 
-At a glance, the project is a teaching / demo app for SSR strategies, streaming, and islands architecture in Astro.
+At a glance, the project is a teaching / demo app for Astro data delivery strategies (SSR, internal API abstraction, streaming defer, SSG) and islands architecture.
 
 ## File Structure
 
@@ -31,21 +32,22 @@ major-meteor/
 │   └── favicon.svg
 ├── src/
 │   ├── components/
-│   │   ├── DeferredUser.astro    # Deferred streaming component
-│   │   ├── UserInfo.tsx          # Preact presentational component
+│   │   ├── DeferredUser.astro          # Deferred streaming component
+│   │   ├── UserInfo.tsx                # Preact presentational component
 │   │   └── like-button/
-│   │       ├── LikeButton.tsx    # Interactive Preact island logic
-│   │       └── LikeButtonIsland.astro # Island wrapper (client:load)
+│   │       ├── LikeButton.tsx          # Interactive Preact island logic
+│   │       └── LikeButtonIsland.astro  # Island wrapper (client:load)
 │   ├── layouts/
-│   │   └── MainLayout.astro      # Shared layout & navigation
+│   │   └── MainLayout.astro            # Shared layout & navigation
 │   ├── pages/
 │   │   ├── api/
-│   │   │   └── users.ts          # Internal API route (JSON users)
-│   │   ├── users-defer.astro     # Page demonstrating server:defer
-│   │   ├── users-ssr-api-route.astro # SSR page fetching internal API
-│   │   └── users-ssr.astro       # Basic SSR page fetching external API
+│   │   │   └── users.ts                # Internal API route (JSON users)
+│   │   ├── users-defer.astro           # Streaming + server:defer example
+│   │   ├── users-ssr-api-route.astro   # SSR page fetching internal API
+│   │   ├── users-ssg-api-route.astro   # SSG page invoking API logic at build
+│   │   └── users-ssr.astro             # Basic SSR page fetching external API
 │   └── types/
-│       └── user.ts               # Shared User interface
+│       └── user.ts                     # Shared User interface
 └── README.md
 ```
 ```
