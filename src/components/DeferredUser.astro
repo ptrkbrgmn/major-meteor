@@ -1,0 +1,53 @@
+---
+// 1. The browser receives the initial page HTML, including the <ul id="users-placeholder">...</ul>. The "Loading users..." message is displayed immediately.
+
+// 2. Astro keeps the connection open. On the server, it starts rendering the DeferredUsers.astro component, which includes fetching the data from your API.
+
+// 3. Once DeferredUsers is rendered to HTML, Astro streams that HTML down the same connection.
+
+// 4. The browser receives the new <ul> from the stream, followed immediately by the inline <script>.
+
+// 5. The script executes instantly, finds the original placeholder by its ID, and replaces it with the new user list that just arrived.
+
+import type { User } from '../types/user';
+import LikeButtonIsland from './like-button/LikeButtonIsland.astro'; // The wrapper is key!
+
+const { placeholderId } = Astro.props;
+
+let users: User[] = [];
+let error: string | null = null;
+
+try {
+  // This fetch runs on the server, but is deferred
+  const res = await fetch(new URL('/api/users', Astro.url.origin));
+  if (!res.ok) throw new Error('Failed to fetch users from API');
+  users = await res.json();
+} catch (err) {
+  error = err instanceof Error ? err.message : 'An unknown error occurred.';
+  console.error(err);
+}
+---
+
+<ul>
+  {error ? (
+    <li class="error">Failed to load users: {error}</li>
+  ) : (
+    users.map(user => (
+      <li style={{ marginBottom: '1rem' }}>
+        <strong>{user.name}</strong> ({user.email}) 
+        
+        <LikeButtonIsland />
+
+      </li>
+    ))
+  )}
+</ul>
+
+<script define:vars={{ placeholderId }}>
+  const placeholder = document.getElementById(placeholderId);
+  const newContent = document.currentScript.previousElementSibling;
+
+  if (placeholder && newContent) {
+    placeholder.replaceWith(newContent);
+  }
+</script>

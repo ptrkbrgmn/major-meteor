@@ -1,0 +1,37 @@
+---
+
+// Fetch data from an internal API route in an Astro SSR page (The request flow has a new step, creating a cleaner architecture):
+// - Browser --> your-site.com/users-ssr-api-route A user requests the page.
+// - Astro Server --> your-site.com/api/users. Your users-ssr-api-route.astro page's script runs on the server and makes a fetch request to its own API route.
+// - API Route --> jsonplaceholder.typicode.com. Your /api/users route runs, fetches the data from the external source, and sends it back as a JSON response.
+// - Page Renders HTML The users-ssr-api-route.astro page receives the JSON, finishes rendering the full HTML for the list, and sends the final page to the browser.
+
+import MainLayout from '../layouts/MainLayout.astro';
+import UserInfo from '../components/UserInfo.tsx';
+import LikeButtonIsland from '../components/like-button/LikeButtonIsland.astro';
+import type { User } from '../types/user';
+
+let users: User[] = [];
+try {
+  // ✅ Fetch from your own internal API route!
+  // Astro.url.origin provides the base URL of your app (e.g., http://localhost:4321)
+  const res = await fetch(Astro.url.origin + '/api/users');
+
+  if (!res.ok) throw new Error('Failed to fetch users from internal API');
+  users = await res.json();
+} catch (err) {
+  console.error('Error fetching users:', err);
+}
+---
+
+<MainLayout title="Users List (SSR + api route)">
+  <h1>Users (SSR + api route)</h1>
+  <ul>
+    {users.map(user => (
+      <li style={{ marginBottom: '1rem' }}>
+        <UserInfo id={user.id} name={user.name} email={user.email} />
+        <LikeButtonIsland />
+      </li>
+    ))}
+  </ul>
+</MainLayout>

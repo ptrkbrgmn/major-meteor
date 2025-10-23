@@ -1,0 +1,43 @@
+---
+
+// Define the props the layout will accept from your pages.
+interface Props {
+	title: string;
+	description?: string; // An optional description for meta tags
+}
+
+// Get the props passed in from a page. Provide a default title if none is given.
+const { title = 'My Astro App', description = 'A basic app built with Astro.' } = Astro.props;
+
+// You can run any JavaScript here, like getting the current year for the footer.
+const currentYear = new Date().getFullYear();
+---
+
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF--8" />
+		<meta name="viewport" content="width=device-width" />
+		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+		<meta name="generator" content={Astro.generator} />
+		<meta name="description" content={description} />
+		<title>{title}</title>
+	</head>
+	<body>
+		<header style="padding: 1rem; border-bottom: 1px solid #eee;">
+			<nav>
+				<a href="/users-ssr">Users (SSR)</a>
+				<a href="/users-ssr-api-route">Users (SSR + API route)</a>
+				<a href="/users-defer">Users (server:defer)</a>
+			</nav>
+		</header>
+
+		<main style="padding: 1rem;">
+			<slot />
+		</main>
+
+		<footer style="padding: 1rem; border-top: 1px solid #eee; text-align: center; color: #666;">
+			<p>&copy; {currentYear} Your Company Name. All rights reserved.</p>
+		</footer>
+	</body>
+</html>

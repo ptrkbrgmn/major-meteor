@@ -1,0 +1,30 @@
+---
+import DeferredUsers from '../components/DeferredUser.astro';
+import MainLayout from '../layouts/MainLayout.astro';
+---
+
+<!-- 
+The browser receives fallback HTML immediately:
+
+<ul>
+  <li>Loading users…</li>
+</ul>
+
+
+Astro creates a server endpoint for <DeferredUsers server:defer />.
+
+Client JS fetches the users from that endpoint asynchronously.
+
+The <ul> is replaced with the fully rendered list of users.
+-->
+
+<MainLayout title="Users (server:defer)">
+    <h1>Users (server:defer)</h1>
+
+    <ul id="users-placeholder">
+      <li>Loading users…</li>
+    </ul>
+
+    <DeferredUsers server:defer placeholderId="users-placeholder" />
+
+</MainLayout>
