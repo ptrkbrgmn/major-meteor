@@ -20,34 +20,34 @@ Navigation links in `MainLayout.astro` make it easy to compare the three data lo
 
 At a glance, the project is a teaching / demo app for SSR strategies, streaming, and islands architecture in Astro.
 
-┌── astro.config.mjs
-├── package.json
-├── public
+## File Structure
+
+```text
+major-meteor/
+├── astro.config.mjs              # Astro config (Node adapter, SSR)
+├── package.json                  # Dependencies & scripts
+├── tsconfig.json                 # TypeScript configuration
+├── public/
 │   └── favicon.svg
-├── README.md
-├── src
-│   ├── components
-│   │   ├── DeferredUser.astro
-│   │   ├── UserInfo.tsx
+├── src/
+│   ├── components/
+│   │   ├── DeferredUser.astro    # Deferred streaming component
+│   │   ├── UserInfo.tsx          # Preact presentational component
 │   │   └── like-button/
-│   │       ├── LikeButton.tsx
-│   │       └── LikeButtonIsland.astro
-│   ├── layouts
-│   │   └── MainLayout.astro
-│   ├── pages
+│   │       ├── LikeButton.tsx    # Interactive Preact island logic
+│   │       └── LikeButtonIsland.astro # Island wrapper (client:load)
+│   ├── layouts/
+│   │   └── MainLayout.astro      # Shared layout & navigation
+│   ├── pages/
 │   │   ├── api/
-│   │   │   └── users.ts
-│   │   ├── users-defer.astro
-│   │   ├── users-ssr-api-route.astro
-│   │   └── users-ssr.astro
-│   └── types
-│       └── user.ts
-└── tsconfig.json
-│   │   ├── users-ssr-api-route.astro
-│   │   └── users-ssr.astro
-│   └── types
-│       └── user.ts
-└── tsconfig.json
+│   │   │   └── users.ts          # Internal API route (JSON users)
+│   │   ├── users-defer.astro     # Page demonstrating server:defer
+│   │   ├── users-ssr-api-route.astro # SSR page fetching internal API
+│   │   └── users-ssr.astro       # Basic SSR page fetching external API
+│   └── types/
+│       └── user.ts               # Shared User interface
+└── README.md
+```
 ```
 
 Astro looks for `.astro` or `.md` files in the `src/pages/` directory. Each page is exposed as a route based on its file name.
