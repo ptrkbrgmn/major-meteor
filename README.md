@@ -241,3 +241,31 @@ This approach is the fastest for the end-user because all the data fetching and 
 
 10. **Done** 👍
     The buttons are now interactive. The rest of the page remains as simple, high-performance HTML.
+
+---
+
+Yes, the `client:load` directive is the explicit instruction that tells Astro to turn a component into an interactive client-side island.
+
+If `client:load` was omitted, the `LikeButton` component would be rendered as **purely static, non-interactive HTML**. The button would appear on the page, but clicking it would do nothing.
+
+***
+
+## Client Island: What `client:load` Does ⚡️
+
+Think of `client:load` as the command that "sends the wiring" for your component. It tells Astro to do two critical things:
+
+1.  **Bundle the JavaScript**: It instructs Astro to process the component's code (in this case, the Preact logic with `useState` and `onClick`) and include it in a JavaScript file that will be sent to the browser.
+2.  **Hydrate the Component**: It adds a small script that tells the browser to download that JavaScript file and use it to "hydrate" or activate the component, attaching its state and event listeners.
+
+***
+
+#### What Happens if You Omit `client:load`
+
+Without the directive, the component is rendered **only on the server**. Here’s the step-by-step:
+
+1.  **Server-Side Render**: During the build or request, Astro runs the Preact code for `<LikeButton />` on the server one time.
+2.  **Initial HTML Output**: The Preact code executes and returns its initial HTML, which is `<button>👍 Like 0</button>`.
+3.  **HTML Embedded**: This static HTML is embedded directly into the final page sent to the browser.
+4.  **No JavaScript Sent**: Because Astro sees no `client:*` directive, it concludes this component is purely presentational and sends **zero client-side JavaScript** for it.
+
+The result is a button that is visible on the page but is essentially "dead." It's like having a light switch on the wall that isn't connected to any wiring; it looks like a switch, but flipping it does nothing. 
