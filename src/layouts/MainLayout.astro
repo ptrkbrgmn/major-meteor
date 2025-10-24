@@ -1,15 +1,12 @@
 ---
 
-// Define the props the layout will accept from your pages.
 interface Props {
 	title: string;
-	description?: string; // An optional description for meta tags
+	description?: string;
 }
 
-// Get the props passed in from a page. Provide a default title if none is given.
 const { title = 'My Astro App', description = 'A basic app built with Astro.' } = Astro.props;
 
-// You can run any JavaScript here, like getting the current year for the footer.
 const currentYear = new Date().getFullYear();
 ---
 

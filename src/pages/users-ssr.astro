@@ -13,16 +13,19 @@ import MainLayout from '../layouts/MainLayout.astro';
 import LikeButtonIsland from '../components/like-button/LikeButtonIsland.astro';
 import UserInfo from '../components/UserInfo';
 import type { User } from '../types/user';
+import { getUsers } from '../lib/users';
+
+const users: User[] = await getUsers();
 
 
-let users: User[] = []; 
-try {
-  const res = await fetch('https://jsonplaceholder.typicode.com/users');
-  if (!res.ok) throw new Error('Failed to fetch users');
-  users = await res.json();
-} catch (err) {
-  console.error('Error fetching users:', err);
-}
+// let users: User[] = []; 
+// try {
+//   const res = await fetch('https://jsonplaceholder.typicode.com/users');
+//   if (!res.ok) throw new Error('Failed to fetch users');
+//   users = await res.json();
+// } catch (err) {
+//   console.error('Error fetching users:', err);
+// }
 ---
 <!-- 2. The Component Template -->
 
