@@ -12,6 +12,7 @@
 import MainLayout from '../layouts/MainLayout.astro';
 import UserInfo from '../components/UserInfo.tsx';
 import LikeButtonIsland from '../components/like-button/LikeButtonIsland.astro';
+import RequestWaterfall from '../components/RequestWaterfall.astro';
 import type { User } from '../types/user';
 
 let users: User[] = [];
@@ -28,7 +29,12 @@ try {
 ---
 
 <MainLayout title="Users List (SSR + api route)">
-  <h1>Users (SSR + api route)</h1>
+  <h1>Users (SSR + API Route)</h1>
+  <p>
+    <strong>Data Fetched:</strong> During the request via internal API route.<br/>
+    <strong>Page Rendered:</strong> On every request, on the server.
+  </p>
+  
   <ul>
     {users.map(user => (
       <li style={{ marginBottom: '1rem' }}>
@@ -37,4 +43,17 @@ try {
       </li>
     ))}
   </ul>
+
+  <RequestWaterfall 
+    steps={[
+      { label: 'Browser Request', type: 'client', description: 'User navigates to /users-ssr-api-route' },
+      { label: 'Server Processing', type: 'server', description: 'Astro receives the request' },
+      { label: 'Internal API Call', type: 'server', description: 'Page fetches /api/users' },
+      { label: 'External API Fetch', type: 'api', description: 'API route fetches external data' },
+      { label: 'Data Return', type: 'server', description: 'JSON data returned to page' },
+      { label: 'HTML Generation', type: 'server', description: 'Page renders with data' },
+      { label: 'Response', type: 'client', description: 'Full HTML sent to browser' },
+      { label: 'Hydration', type: 'client', description: 'Islands become interactive' }
+    ]}
+  />
 </MainLayout>

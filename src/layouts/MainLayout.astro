@@ -21,21 +21,181 @@ const currentYear = new Date().getFullYear();
 		<title>{title}</title>
 	</head>
 	<body>
-		<header style="padding: 1rem; border-bottom: 1px solid #eee;">
+		<header>
 			<nav>
-				<a href="/users-ssr" style="text-decoration:none;">Users (SSR)</a> |
-				<a href="/users-ssr-api-route" style="text-decoration:none;">Users (SSR + API route)</a> |
-				<a href="/users-ssg-api-route" style="text-decoration:none;">Users (SSG + API route)</a> |
-				<a href="/users-defer" style="text-decoration:none;">Users (server:defer)</a>
+				<a href="/">Home</a> 
+        <span class="header-divider">|</span>
+				<a href="https://github.com/contentful/contentful.js" class="nav-external" target="_blank" rel="noopener noreferrer">Contentful Docs</a>
 			</nav>
 		</header>
+    
+    <div class="sub-nav">
+      <div class="sub-nav-inner">
+        <span class="label">Patterns:</span>
+        <a href="/users-ssr">SSR</a>
+        <a href="/users-ssg-api-route">SSG</a>
+        <a href="/users-defer">Defer</a>
+        <span class="divider">|</span>
+        <span class="label">Contentful:</span>
+        <a href="/contentful-users-ssg" class="highlight">SSG</a>
+        <a href="/contentful-fastly" class="highlight">Fastly Cache</a>
+      </div>
+    </div>
 
-		<main style="padding: 1rem;">
+		<main>
 			<slot />
 		</main>
 
-		<footer style="padding: 1rem; border-top: 1px solid #eee; text-align: center; color: #666;">
+		<footer>
 			<p>&copy; {currentYear} Your Company Name. All rights reserved.</p>
 		</footer>
 	</body>
 </html>
+
+<style is:global>
+	:root {
+		--font-fallback: -apple-system, BlinkMacSystemFont, Segoe UI, Helvetica, Arial, sans-serif, Apple Color Emoji, Segoe UI Emoji;
+		--font-header: 'Inter', var(--font-fallback);
+		--font-body: 'Inter', var(--font-fallback);
+		--text-color: #333;
+		--bg-color: #fcfcfc;
+		--accent-color: #234;
+		--accent-highlight: #456;
+	}
+
+	* {
+		box-sizing: border-box;
+	}
+
+	html, body {
+		height: 100%;
+		margin: 0;
+		padding: 0;
+	}
+
+	body {
+		font-family: var(--font-body);
+		background-color: var(--bg-color);
+		color: var(--text-color);
+		display: flex;
+		flex-direction: column;
+		min-height: 100vh;
+		line-height: 1.6;
+	}
+
+	h1, h2, h3, h4, h5, h6 {
+		font-family: var(--font-header);
+		margin-top: 0;
+	}
+
+	a {
+		color: var(--accent-color);
+		text-decoration: none;
+	}
+
+	a:hover {
+		text-decoration: underline;
+		color: var(--accent-highlight);
+	}
+</style>
+
+<style>
+	header {
+		background: #fff;
+		border-bottom: 1px solid #eee;
+		padding: 1rem;
+		box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+	}
+
+	nav {
+		max-width: 800px;
+		margin: 0 auto;
+		display: flex;
+		gap: 1.5rem;
+		justify-content: center;
+		flex-wrap: wrap;
+	}
+
+	nav a {
+		font-weight: 500;
+		color: #555;
+		padding: 0.5rem;
+		border-radius: 4px;
+		transition: background-color 0.2s, color 0.2s;
+	}
+
+	nav a:hover {
+		background-color: #f0f0f0;
+		color: #111;
+		text-decoration: none;
+	}
+
+  .header-divider {
+    color: #ddd;
+    align-self: center;
+  }
+
+	main {
+		flex: 1;
+		width: 100%;
+		max-width: 800px;
+		margin: 2rem auto;
+		padding: 0 1rem;
+	}
+
+	footer {
+		background: #fff;
+		padding: 1.5rem;
+		border-top: 1px solid #eee;
+		text-align: center;
+		color: #888;
+		font-size: 0.9rem;
+		margin-top: auto;
+	}
+
+  .sub-nav {
+    background: #234; 
+    padding: 0.5rem 1rem; 
+    color: #fff; 
+    font-size: 0.85rem; 
+    margin-bottom: 2rem;
+  }
+  
+  .sub-nav-inner {
+    max-width: 800px;
+    margin: 0 auto;
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+
+  .sub-nav a {
+    color: #ddd;
+    text-decoration: none;
+    padding: 0.2rem 0.5rem;
+    border-radius: 4px;
+  }
+  
+  .sub-nav a:hover {
+    background: rgba(255,255,255,0.1);
+    color: #fff;
+  }
+
+  .sub-nav .highlight {
+    color: #88ffcc;
+    font-weight: 500;
+  }
+
+  .sub-nav .label {
+    color: #8899aa;
+    text-transform: uppercase;
+    font-size: 0.7rem;
+    letter-spacing: 0.5px;
+    font-weight: bold;
+  }
+
+  .sub-nav .divider {
+    color: #445566;
+  }
+</style>

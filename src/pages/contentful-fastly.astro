@@ -1,0 +1,79 @@
+---
+import { contentfulClient } from '../lib/contentful';
+import MainLayout from '../layouts/MainLayout.astro';
+import RequestWaterfall from '../components/RequestWaterfall.astro';
+
+// 1. SSR Mode (Default) - We do NOT use 'prerender = true' here.
+// This code runs on the Server (Cloud Run) whenever Fastly needs a fresh copy.
+
+// 2. FASTLY HEADERS
+// 'Surrogate-Control': Instructions specifically for Fastly.
+// max-age=31536000: Tell Fastly to hold this version for 1 year (effectively static).
+Astro.response.headers.set('Surrogate-Control', 'max-age=31536000');
+
+// 'Surrogate-Key': Tags this response so you can purge it by name later.
+// When Contentful changes, you hit Fastly API: PURGE /service/xxx/key/contentful-list
+Astro.response.headers.set('Surrogate-Key', 'contentful-list');
+
+// 'Cache-Control': Instructions for the User's Browser.
+// max-age=0, must-revalidate: "Don't cache this in Chrome. Always ask Fastly."
+// This ensures users always see the latest version stored in Fastly.
+Astro.response.headers.set('Cache-Control', 'public, max-age=0, must-revalidate');
+
+
+// 3. Fetch Data (Runs on Cloud Run)
+console.log('Server fetching fresh data from Contentful...');
+const response = await contentfulClient.getEntries({ content_type: 'user' });
+const users = response.items;
+---
+
+<MainLayout title="Fastly Cached SSR" description="SSR with Edge Caching (Surrogate Keys).">
+  <h1>Contentful + Fastly (Cached SSR)</h1>
+  <p>
+    This is the ideal pattern for <strong>Cloud Run + Fastly</strong>.
+  </p>
+  <ul>
+    <li><strong>Cloud Run:</strong> Builds the page dynamically (SSR).</li>
+    <li><strong>Fastly:</strong> Caches the result "forever" due to <code>Surrogate-Control</code>.</li>
+    <li><strong>Updates:</strong> Contentful Webhook &rarr; Fastly Purge &rarr; Instant Update.</li>
+  </ul>
+
+  <div class="user-grid">
+    {users.map((user: any) => (
+      <article class="user-card">
+        <h3>{user.fields.name}</h3>
+        <p class="role">@{user.fields.username}</p>
+        <div class="meta">CMS ID: {user.sys.id}</div>
+      </article>
+    ))}
+  </div>
+
+  <RequestWaterfall 
+    steps={[
+      { label: 'Browser Request', type: 'client', description: 'GET /contentful-fastly' },
+      { label: 'Fastly Edge', type: 'api', description: 'Check Cache. Hit? Return instantly.' },
+      { label: 'Cloud Run (Miss)', type: 'server', description: 'If Miss: Run SSR logic' },
+      { label: 'Contentful Fetch', type: 'api', description: 'Fetch data from CMS' },
+      { label: 'Cache Store', type: 'server', description: 'Fastly stores result w/ Key contentful-list' },
+      { label: 'Response', type: 'client', description: 'Cached HTML delivered' }
+    ]}
+  />
+</MainLayout>
+
+<style>
+  .user-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 1rem;
+    margin-bottom: 2rem;
+  }
+  .user-card {
+    border: 1px solid #ddd;
+    padding: 1rem;
+    border-radius: 8px;
+    background: #fdfdfd;
+  }
+  .user-card h3 { margin: 0 0 0.5rem 0; font-size: 1.1rem; }
+  .role { margin: 0; color: #666; font-size: 0.9rem; }
+  .meta { margin-top: 1rem; font-size: 0.75rem; color: #aaa; font-family: monospace; }
+</style>

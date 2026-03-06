@@ -1,0 +1,161 @@
+---
+import MainLayout from '../layouts/MainLayout.astro';
+---
+
+<MainLayout title="Astro Rendering Patterns" description="Exploring different rendering patterns in Astro.">
+  <div class="intro">
+    <h1>Astro Rendering Patterns</h1>
+    <p>This project demonstrates multiple delivery patterns plus selective hydration with a Preact island.</p>
+    <p>Select a rendering pattern below to see it in action:</p>
+  </div>
+
+  <div class="card-grid">
+    <a href="/users-ssr" class="card">
+      <div class="card-content">
+        <h2>Users (SSR)</h2>
+        <p>Fetches external user data directly during the server render.</p>
+      </div>
+      <div class="card-footer">
+        <span class="tag">Server-side Rendering</span>
+      </div>
+    </a>
+    
+    <a href="/users-ssr-api-route" class="card">
+      <div class="card-content">
+        <h2>Users (SSR + API)</h2>
+        <p>Separates data access from presentation using an internal API route.</p>
+      </div>
+      <div class="card-footer">
+        <span class="tag">SSR + API</span>
+      </div>
+    </a>
+    
+    <a href="/users-ssg-api-route" class="card">
+      <div class="card-content">
+        <h2>Users (SSG + API)</h2>
+        <p>Calls the API route logic at build time for static generation.</p>
+      </div>
+      <div class="card-footer">
+        <span class="tag">Static Generation</span>
+      </div>
+    </a>
+    
+    <a href="/users-defer" class="card">
+      <div class="card-content">
+        <h2>Users (Deferred)</h2>
+        <p>Streams a placeholder immediately, then swaps in the content using <code>server:defer</code>.</p>
+      </div>
+      <div class="card-footer">
+        <span class="tag">Streaming</span>
+      </div>
+    </a>
+    
+    <a href="/contentful-users-ssg" class="card">
+      <div class="card-content">
+        <h2>Contentful (SSG)</h2>
+        <p>Demonstrates structure for fetching CMS data using a client wrapper.</p>
+      </div>
+      <div class="card-footer">
+        <span class="tag">SSG + CMS Wrapper</span>
+      </div>
+    </a>
+
+    <a href="/contentful-fastly" class="card">
+      <div class="card-content">
+        <h2>Contentful (Fastly)</h2>
+        <p>SSR with caching headers. Contentful updates trigger a Fastly purge.</p>
+      </div>
+      <div class="card-footer">
+        <span class="tag">Cached SSR</span>
+      </div>
+    </a>
+  </div>
+</MainLayout>
+
+<style>
+  .intro {
+    text-align: center;
+    max-width: 600px;
+    margin: 3rem auto;
+  }
+
+  h1 {
+    font-size: 2.5rem;
+    margin-bottom: 0.5rem;
+    background: linear-gradient(135deg, #3355ee, #8833cc);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  p {
+    color: #666;
+  }
+
+  .card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 3rem;
+  }
+
+  .card {
+    display: flex;
+    flex-direction: column;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    text-decoration: none;
+    color: inherit;
+    transition: transform 0.2s, box-shadow 0.2s;
+    border: 1px solid #f0f0f0;
+    overflow: hidden;
+  }
+
+  .card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    border-color: #e0e0e0;
+    text-decoration: none;
+  }
+
+  .card-content {
+    padding: 1.5rem;
+    flex-grow: 1;
+  }
+
+  .card h2 {
+    font-size: 1.25rem;
+    margin-bottom: 0.75rem;
+    color: #111;
+  }
+
+  .card p {
+    color: #555;
+    margin: 0;
+    font-size: 0.95rem;
+    line-height: 1.5;
+  }
+
+  .card-footer {
+    padding: 1rem 1.5rem;
+    background-color: #f9fafb;
+    border-top: 1px solid #f0f0f0;
+  }
+
+  .tag {
+    display: inline-block;
+    background-color: #e5e7eb;
+    color: #374151;
+    padding: 0.25rem 0.75rem;
+    border-radius: 9999px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .card:hover .tag {
+    background-color: #d1d5db;
+    color: #111827;
+  }
+</style>

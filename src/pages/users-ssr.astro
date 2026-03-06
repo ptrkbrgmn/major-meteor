@@ -1,17 +1,19 @@
 ---
-// An Astro component is made up of two main parts: the Component Script and the Component Template
-
-
-// 1. The Component Script (frontmatter section)
-// - importing other Astro components
-// - importing other framework components, like React
-// - importing data, like a JSON file
-// - fetching content from an API or database
-// - creating variables that you will reference in your template
+// Standard Server-Side Rendering (SSR) Pattern:
+// 
+// 1. Browser Request: The user visits /users-ssr.
+// 2. Server Processing: The server receives the request and starts changing the page.
+// 3. Blocking Data Fetch: The await getUsers() call pauses the rendering. The server waits for the external API.
+// 4. HTML Generation: Once data arrives, the full HTML is generated on the server.
+// 5. Response: The complete HTML (with data) is sent to the browser.
+// 
+// Result: The user sees a white screen (or browser spinner) while the data is fetching, 
+// but receives the fully populated page consistently.
 
 import MainLayout from '../layouts/MainLayout.astro';
 import LikeButtonIsland from '../components/like-button/LikeButtonIsland.astro';
 import UserInfo from '../components/UserInfo';
+import RequestWaterfall from '../components/RequestWaterfall.astro';
 import type { User } from '../types/user';
 import { getUsers } from '../lib/users';
 
@@ -31,6 +33,11 @@ const users: User[] = await getUsers();
 
 <MainLayout title="Users (SSR)">
   <h1>Users (SSR)</h1>
+  <p>
+    <strong>Data Fetched:</strong> During the request, on the server.<br/>
+    <strong>Page Rendered:</strong> On every request, on the server.
+  </p>
+
   <ul>
     {users.map(user => (
       <li style={{ marginBottom: '1rem' }}>
@@ -39,4 +46,15 @@ const users: User[] = await getUsers();
       </li>
     ))}
   </ul>
+
+  <RequestWaterfall 
+    steps={[
+      { label: 'Browser Request', type: 'client', description: 'User navigates to /users-ssr' },
+      { label: 'Server Processing', type: 'server', description: 'Astro receives the request' },
+      { label: 'Data Fetch', type: 'api', description: 'Server fetches data from external API' },
+      { label: 'HTML Generation', type: 'server', description: 'Components rendered to HTML string' },
+      { label: 'Response', type: 'client', description: 'Full HTML sent to browser' },
+      { label: 'Hydration', type: 'client', description: 'Interactive islands become active' }
+    ]}
+  />
 </MainLayout>

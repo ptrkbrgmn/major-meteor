@@ -1,6 +1,7 @@
 ---
 import DeferredUsers from '../components/DeferredUser.astro';
 import MainLayout from '../layouts/MainLayout.astro';
+import RequestWaterfall from '../components/RequestWaterfall.astro';
 ---
 
 <!-- 
@@ -17,14 +18,29 @@ Client JS fetches the users from that endpoint asynchronously.
 
 The <ul> is replaced with the fully rendered list of users.
 -->
+<MainLayout title="Users (Deferred)">
+  <h1>Users (Deferred)</h1>
+  <p>
+    <strong>Data Fetched:</strong> Asynchronously on the server after initial page load.<br/>
+    <strong>Page Rendered:</strong> Server-side rendered (SSR), with deferred component streaming.
+  </p>
 
-<MainLayout title="Users (server:defer)">
-    <h1>Users (server:defer)</h1>
-
-    <ul id="users-placeholder">
-      <li>Loading users…</li>
+  <DeferredUsers server:defer>
+    <ul slot="fallback">
+      <li>Loading users...</li>
     </ul>
+  </DeferredUsers>
 
-    <DeferredUsers server:defer placeholderId="users-placeholder" />
-
+  <RequestWaterfall 
+    steps={[
+      { label: 'Browser Request', type: 'client', description: 'User navigates to /users-defer' },
+      { label: 'Server Processing', type: 'server', description: 'Astro sends initial HTML shell' },
+      { label: 'Fallback Render', type: 'client', description: '"Loading..." state shown' },
+      { label: 'Deferred Request', type: 'client', description: 'Browser requests deferred content (automatic)' },
+      { label: 'Server Fetch', type: 'api', description: 'Server fetches data for component' },
+      { label: 'Component Render', type: 'server', description: 'Component HTML generated' },
+      { label: 'Stream Update', type: 'client', description: 'Content swapped into page' },
+      { label: 'Hydration', type: 'client', description: 'Islands become interactive' }
+    ]}
+  />
 </MainLayout>

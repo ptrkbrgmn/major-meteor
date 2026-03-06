@@ -1,0 +1,127 @@
+---
+// 1. IMPORT YOUR CLIENT 
+// In dev, this uses the mock. In prod, update src/lib/contentful.ts to point to the real API.
+import { contentfulClient } from '../lib/contentful';
+import MainLayout from '../layouts/MainLayout.astro';
+import RequestWaterfall from '../components/RequestWaterfall.astro';
+
+// 2. CRITICAL FOR CMS: Use SSG (Static Site Generation)
+export const prerender = true;
+
+// 3. FETCH DATA (Runs once at build time)
+console.log('Fetching users from CMS client...');
+
+// We ask for 'user' content type (example name)
+const response = await contentfulClient.getEntries({ content_type: 'user' });
+const users = response.items;
+
+console.log(`Fetched ${users.length} users via client.`);
+---
+
+<MainLayout title="CMS Users (SSG)" description="Mock Contentful integration using SSG.">
+  <h1>CMS Users (Contentful Mock)</h1>
+  <p>
+    This page demonstrates how to structure your app to use a Headless CMS like Contentful.<br/>
+    The data is fetched using a client wrapper in <code>src/lib/contentful.ts</code>.
+  </p>
+
+  <p>
+    <strong>Data Fetched:</strong> At build time (SSG).<br/>
+    <strong>Source:</strong> Mock Contentful Client (switchable to real API).
+  </p>
+
+  <div class="user-grid">
+    {users.map((user: any) => (
+      <article class="user-card">
+        <h3>{user.fields.name}</h3>
+        <p class="role">@{user.fields.username}</p>
+        
+        <div class="user-details">
+            <p><strong>Email:</strong> {user.fields.email}</p>
+            <p><strong>Company:</strong> {user.fields.company?.name}</p>
+            <p><strong>Website:</strong> <a href={`http://${user.fields.website}`} target="_blank">{user.fields.website}</a></p>
+        </div>
+        
+        <div class="meta">
+            CMS ID: {user.sys.id} <br/> 
+            Created: {new Date(user.sys.createdAt || Date.now()).toLocaleDateString()}
+        </div>
+      </article>
+    ))}
+  </div>
+
+  <RequestWaterfall 
+    steps={[
+      { label: 'Build Process', type: 'build', description: 'npm run build' },
+      { label: 'Contentful Client', type: 'api', description: 'Fetch "user" entries' },
+      { label: 'HTML Generation', type: 'build', description: 'Generate static HTML for list' },
+      { label: 'Deployment', type: 'build', description: 'Upload static files to CDN' },
+      { label: 'Browser Request', type: 'client', description: 'User visits /contentful-users-ssg' },
+      { label: 'Instant Load', type: 'client', description: 'Pre-rendered HTML served immediately' }
+    ]}
+  />
+</MainLayout>
+
+<style>
+  .user-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+  }
+
+  .user-card {
+    border: 1px solid #eee;
+    padding: 1.5rem;
+    border-radius: 12px;
+    background: white;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    transition: transform 0.2s, box-shadow 0.2s;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .user-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+  }
+
+  .user-card h3 {
+    margin-top: 0;
+    margin-bottom: 0.25rem;
+    font-size: 1.4rem;
+    color: #333;
+  }
+
+  .role {
+    color: #666;
+    font-weight: 500;
+    margin-top: 0;
+    margin-bottom: 1.5rem;
+    font-size: 0.95rem;
+  }
+  
+  .user-details p {
+    margin: 0.5rem 0;
+    font-size: 0.95rem;
+    color: #444;
+  }
+
+  .meta {
+    margin-top: auto;
+    padding-top: 1.5rem;
+    font-size: 0.75rem;
+    color: #999;
+    font-family: monospace;
+    line-height: 1.4;
+  }
+
+  a {
+    color: #0055cc;
+    text-decoration: none;
+  }
+  
+  a:hover {
+    text-decoration: underline;
+  }
+</style>
